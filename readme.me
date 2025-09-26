@@ -1,0 +1,141 @@
+# Wellness Tracker Backend API
+
+A simple and concise Node.js backend with MongoDB for the Wellness Tracker application.
+
+## Features
+
+- User authentication (register/login)
+- User profile management
+- Daily tracking for water, food, and sleep
+- Weekly data retrieval
+- JWT-based authentication
+- Input validation
+- CORS enabled
+
+## Setup
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Set up environment variables:**
+   Create a `.env` file with:
+   ```
+   PORT=5000
+   MONGODB_URI=mongodb://localhost:27017/wellness-tracker
+   JWT_SECRET=your-super-secret-jwt-key
+   NODE_ENV=development
+   ```
+
+3. **Start MongoDB:**
+   Make sure MongoDB is running on your system.
+
+4. **Run the server:**
+   ```bash
+   # Development mode
+   npm run dev
+   
+   # Production mode
+   npm start
+   ```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user info
+
+### Profile
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update user profile
+- `PUT /api/profile/goals` - Update user goals
+
+### Tracking
+- `GET /api/tracking/today` - Get today's tracking data
+- `PUT /api/tracking/water` - Update water intake
+- `PUT /api/tracking/food` - Update food intake
+- `PUT /api/tracking/sleep` - Update sleep hours
+- `GET /api/tracking/weekly` - Get weekly tracking data
+- `DELETE /api/tracking/reset` - Reset today's data
+
+### Health Check
+- `GET /api/health` - API health check
+
+## Usage Examples
+
+### Register User
+```javascript
+POST /api/auth/register
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "age": 25,
+  "weight": 70,
+  "height": 175
+}
+```
+
+### Login
+```javascript
+POST /api/auth/login
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+### Update Water Intake
+```javascript
+PUT /api/tracking/water
+Headers: { "Authorization": "Bearer <token>" }
+{
+  "amount": 250
+}
+```
+
+### Update Food Intake
+```javascript
+PUT /api/tracking/food
+Headers: { "Authorization": "Bearer <token>" }
+{
+  "calories": 500,
+  "meals": 1
+}
+```
+
+### Update Sleep
+```javascript
+PUT /api/tracking/sleep
+Headers: { "Authorization": "Bearer <token>" }
+{
+  "hours": 8
+}
+```
+
+## Database Schema
+
+### User Model
+- name, email, password
+- age, weight, height
+- goals (water, food, sleep)
+
+### Tracking Model
+- userId, date
+- water (amount, goal)
+- food (calories, meals, goal)
+- sleep (hours, goal)
+
+## Security Features
+
+- Password hashing with bcrypt
+- JWT token authentication
+- Input validation
+- Protected routes
+- CORS configuration
+
+## Development
+
+The API is designed to be simple and easy to integrate with your frontend wellness tracker application.
