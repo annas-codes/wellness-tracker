@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .logout-btn {
+            margin: 1rem;
+            text-align: center;
+        }
+
+        .logout-btn .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 80%;
+        }
+
+        .logout-btn .filter-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .user-info-banner {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #357a63;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .activity-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .activity-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .activity-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .current-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #357a63;
+        }
+
+        .target-value {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(53, 122, 99, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #357a63, #4a9d7a);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: #357a63;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .control-btn:hover {
+            background: #2d6b56;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        .control-btn.secondary {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+        }
+
+        .control-btn.secondary:hover {
+            background: rgba(53, 122, 99, 0.2);
+        }
+
+        .quick-add {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quick-add-btn {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border: 1px solid rgba(53, 122, 99, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .quick-add-btn:hover {
+            background: #357a63;
+            color: white;
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendations h3 {
+            color: #357a63;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #357a63;
+        }
+
+        .recommendation-icon {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+        }
+
+        .recommendation-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .activities-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .activity-card {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-btn {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .activity-card {
+                padding: 1rem;
+            }
+
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-add {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboardNew.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link active">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart2.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setReminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminder.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+            </ul>
+            <div class="logout-btn">
+                <button class="filter-btn" id="logoutBtn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Activities</h2>
+                <div></div>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Daily Activities</h1>
+                <p>Track your wellness journey with personalized goals</p>
+            </div>
+
+            <!-- User Info Banner -->
+            <div class="user-info-banner">
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="userAge">--</div>
+                        <div class="stat-label">Age</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userWeight">--</div>
+                        <div class="stat-label">Weight (kg)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userHeight">--</div>
+                        <div class="stat-label">Height (cm)</div>
+                    </div>
+                    <!-- <div class="stat-item">
+                        <div class="stat-value" id="userBMI">--</div>
+                        <div class="stat-label">BMI</div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Recommendations
+            <div class="recommendations">
+                <h3>💡 Personalized Recommendations</h3>
+                <div id="recommendationsList">
+                    Recommendations will be populated by JavaScript
+                </div>
+            </div> -->
+
+            <!-- Activities Grid -->
+            <div class="activities-grid">
+                <!-- Water Intake Card -->
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <div class="activity-icon">💧</div>
+                        <div>
+                            <div class="activity-title">Water Intake</div>
+                            <div class="activity-subtitle">Stay hydrated throughout the day</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="waterCurrent">0ml</span>
+                            <span class="target-value">Goal: <span id="waterTarget">2000ml</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="waterProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="control-btn" onclick="addWater(250)">Add 250ml</button>
+                        <button class="control-btn secondary" onclick="resetWater()">Reset</button>
+                    </div>
+                    
+                    <div class="quick-add">
+                        <button class="quick-add-btn" onclick="addWater(100)">+100ml</button>
+                        <button class="quick-add-btn" onclick="addWater(200)">+200ml</button>
+                        <button class="quick-add-btn" onclick="addWater(500)">+500ml</button>
+                        <button class="quick-add-btn" onclick="addWater(750)">+750ml</button>
+                    </div>
+                </div>
+
+                <!-- Food Intake Card -->
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <div class="activity-icon">🍎</div>
+                        <div>
+                            <div class="activity-title">Food Intake</div>
+                            <div class="activity-subtitle">Track your daily calories</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="foodCurrent">0 kcal</span>
+                            <span class="target-value">Goal: <span id="foodTarget">2000 kcal</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="foodProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="control-btn" onclick="addFood(300)">Add Meal</button>
+                        <button class="control-btn secondary" onclick="resetFood()">Reset</button>
+                    </div>
+                    
+                    <div class="quick-add">
+                        <button class="quick-add-btn" onclick="addFood(150)">Snack +150</button>
+                        <button class="quick-add-btn" onclick="addFood(400)">Meal +400</button>
+                        <button class="quick-add-btn" onclick="addFood(600)">Large Meal +600</button>
+                    </div>
+                </div>
+
+                <!-- Sleep Tracking Card -->
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <div class="activity-icon">😴</div>
+                        <div>
+                            <div class="activity-title">Sleep Tracking</div>
+                            <div class="activity-subtitle">Monitor your sleep quality</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="sleepCurrent">0h</span>
+                            <span class="target-value">Goal: <span id="sleepTarget">8h</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="sleepProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="control-btn" onclick="addSleep(1)">Add 1 Hour</button>
+                        <button class="control-btn secondary" onclick="resetSleep()">Reset</button>
+                    </div>
+                    
+                    <div class="quick-add">
+                        <button class="quick-add-btn" onclick="addSleep(0.5)">+30min</button>
+                        <button class="quick-add-btn" onclick="addSleep(2)">+2h</button>
+                        <button class="quick-add-btn" onclick="setSleep(8)">Full Night</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+  
+<!-- Script section same as pehle but recommendation part removed -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login3.html";
+    return;
+  }
+  const base = "http://localhost:3000";
+
+  async function api(path, opts = {}) {
+    opts.headers = Object.assign({}, opts.headers || {}, {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    });
+    const res = await fetch(base + path, opts);
+    if (res.status === 401) {
+      localStorage.removeItem("token");
+      alert("Session expired. Login again.");
+      window.location.href = "login3.html";
+      throw new Error("Unauthorized");
+    }
+    return res;
+  }
+
+  let userProfile = { name: "User", age: 0, weight: 0, height: 0 };
+  let personalizedGoals = { water: 2000, food: 2000, sleep: 8 };
+  let waterIntake = 0, foodIntake = 0, sleepHours = 0;
+
+  function applyGoalsToUI() {
+    document.getElementById('waterTarget').textContent = `${personalizedGoals.water}ml`;
+    document.getElementById('foodTarget').textContent = `${personalizedGoals.food} kcal`;
+    document.getElementById('sleepTarget').textContent = `${personalizedGoals.sleep}h`;
+  }
+
+  function updateUIValues() {
+    document.getElementById('waterCurrent').textContent = `${waterIntake}ml`;
+    document.getElementById('foodCurrent').textContent = `${foodIntake} kcal`;
+    document.getElementById('sleepCurrent').textContent = `${sleepHours}h`;
+    const wPerc = Math.min((waterIntake / personalizedGoals.water) * 100, 100);
+    document.getElementById('waterProgress').style.width = `${wPerc}%`;
+    const fPerc = Math.min((foodIntake / personalizedGoals.food) * 100, 100);
+    document.getElementById('foodProgress').style.width = `${fPerc}%`;
+    const sPerc = Math.min((sleepHours / personalizedGoals.sleep) * 100, 100);
+    document.getElementById('sleepProgress').style.width = `${sPerc}%`;
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await api("/api/profile");
+      const data = await res.json();
+      if (res.ok && data.user) {
+        const u = data.user;
+        userProfile = {
+          name: u.name || "User",
+          age: u.age || 0,
+          weight: u.weight || 0,
+          height: u.height || 0
+        };
+        document.getElementById('userAge').textContent = userProfile.age || "--";
+        document.getElementById('userWeight').textContent = userProfile.weight || "--";
+        document.getElementById('userHeight').textContent = userProfile.height || "--";
+        if (userProfile.height && userProfile.weight) {
+          document.getElementById('userBMI').textContent = (userProfile.weight / ((userProfile.height/100)**2)).toFixed(1);
+        } else {
+          document.getElementById('userBMI').textContent = "--";
+        }
+        let waterGoal = Math.round(userProfile.weight * 35);
+        if (userProfile.age > 65) waterGoal = Math.round(waterGoal * 0.9);
+        if (userProfile.age < 18) waterGoal = Math.round(waterGoal * 1.1);
+        let bmr = (10 * userProfile.weight) + (6.25 * userProfile.height) - (5 * userProfile.age) + 5;
+        let foodGoal = Math.round(bmr * 1.55);
+        const bmiVal = userProfile.weight && userProfile.height ? (userProfile.weight / ((userProfile.height/100)**2)) : null;
+        if (bmiVal && bmiVal < 18.5) foodGoal = Math.round(foodGoal * 1.1);
+        if (bmiVal && bmiVal > 25) foodGoal = Math.round(foodGoal * 0.9);
+        let sleepGoal = 8;
+        if (userProfile.age < 18) sleepGoal = 9;
+        if (userProfile.age > 65) sleepGoal = 7;
+        personalizedGoals = { water: waterGoal, food: foodGoal, sleep: sleepGoal };
+        applyGoalsToUI();
+      }
+    } catch (err) {
+      console.error("Profile load error", err);
+    }
+  }
+
+  async function loadTodayTracking() {
+    try {
+      const res = await api("/api/tracking/today");
+      if (res.status === 404) {
+        waterIntake = 0; foodIntake = 0; sleepHours = 0;
+        updateUIValues();
+        return;
+      }
+      const data = await res.json();
+      const t = data.tracking || {};
+      waterIntake = t.water?.amount || 0;
+      foodIntake = t.food?.calories || 0;
+      sleepHours = t.sleep?.hours || 0;
+      updateUIValues();
+    } catch (err) {
+      console.error("loadTodayTracking error", err);
+    }
+  }
+
+  async function addWater(amount) {
+    try {
+      const res = await api("/api/tracking/water", { method: "PUT", body: JSON.stringify({ amount }) });
+      const data = await res.json();
+      if (res.ok) {
+        waterIntake = data.water?.amount || 0;
+        personalizedGoals.water = data.water?.goal ?? personalizedGoals.water;
+        applyGoalsToUI(); updateUIValues();
+      }
+    } catch (err) { console.error(err); }
+  }
+  window.addWater = addWater;
+
+  async function addFood(calories) {
+    try {
+      const res = await api("/api/tracking/food", { method: "PUT", body: JSON.stringify({ calories, meals:1 }) });
+      const data = await res.json();
+      if (res.ok) {
+        foodIntake = data.food?.calories || 0;
+        personalizedGoals.food = data.food?.goal ?? personalizedGoals.food;
+        applyGoalsToUI(); updateUIValues();
+      }
+    } catch (err) { console.error(err); }
+  }
+  window.addFood = addFood;
+
+  async function addSleep(hours) {
+    try {
+      const res = await api("/api/tracking/sleep", { method: "PUT", body: JSON.stringify({ hours }) });
+      const data = await res.json();
+      if (res.ok) {
+        sleepHours = data.sleep?.hours || 0;
+        personalizedGoals.sleep = data.sleep?.goal ?? personalizedGoals.sleep;
+        applyGoalsToUI(); updateUIValues();
+      }
+    } catch (err) { console.error(err); }
+  }
+  window.addSleep = addSleep;
+  window.setSleep = addSleep;
+
+  async function resetAll() {
+    try {
+      if (!confirm("Reset today's data to zero?")) return;
+      const res = await api("/api/tracking/reset", { method: "DELETE" });
+      if (res.ok) {
+        waterIntake = 0; foodIntake = 0; sleepHours = 0;
+        updateUIValues();
+      }
+    } catch (err) { console.error(err); }
+  }
+//   window.resetWater = resetAll; window.resetFood = resetAll; window.resetSleep = resetAll;
+
+    // Reset sirf Water
+async function resetWater() {
+  try {
+    if (!confirm("Reset today's water intake?")) return;
+    const res = await api("/api/tracking/water", { method: "DELETE" });
+    if (res.ok) {
+      waterIntake = 0;
+      updateUIValues();
+    }
+  } catch (err) { console.error(err); }
+}
+window.resetWater = resetWater;
+
+
+// Reset sirf Food
+async function resetFood() {
+  try {
+    if (!confirm("Reset today's food intake?")) return;
+    const res = await api("/api/tracking/food", { method: "DELETE" });
+    if (res.ok) {
+      foodIntake = 0;
+      updateUIValues();
+    }
+  } catch (err) { console.error(err); }
+}
+window.resetFood = resetFood;
+
+
+// Reset sirf Sleep
+async function resetSleep() {
+  try {
+    if (!confirm("Reset today's sleep hours?")) return;
+    const res = await api("/api/tracking/sleep", { method: "DELETE" });
+    if (res.ok) {
+      sleepHours = 0;
+      updateUIValues();
+    }
+  } catch (err) { console.error(err); }
+}
+window.resetSleep = resetSleep;
+
+
+  (async () => {
+    await loadProfile();
+    await loadTodayTracking();
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.addEventListener('click', ()=> {
+      if (confirm('Logout?')) { localStorage.removeItem('token'); window.location.href='login3.html'; }
+    });
+  })();
+});
+</script>
+
+
+</body>
+</html>

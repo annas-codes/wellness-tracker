@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #357a63;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .reset-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(108, 154, 139, 0.38);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .reset-title {
+            font-size: 46px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .reset-subtitle {
+            font-size: 15px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 48px;
+            line-height: 1.2;
+            max-width: 386px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 19px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid white;
+            padding: 8px 0;
+            font-size: 16px;
+            color: white;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-input:focus {
+            border-bottom-color: #f4f0e1;
+        }
+
+        .back-to-login {
+            text-align: right;
+            margin-bottom: 32px;
+        }
+
+        .back-to-login-link {
+            color: rgba(238, 136, 221, 0.61);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        .back-to-login-link:hover {
+            color: rgba(238, 136, 221, 0.8);
+        }
+
+        .reset-button {
+            width: 100%;
+            height: 80px;
+            background-color: #40866f;
+            border: 1px solid #f4f0e1;
+            border-radius: 10px;
+            color: #f4f0e1;
+            font-size: 19px;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .reset-button:active {
+            transform: translateY(0);
+            box-shadow: 8px 8px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success and Error message styles */
+        .message {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .success-message {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .error-message {
+            background-color: rgba(244, 67, 54, 0.9);
+            color: white;
+        }
+
+        .message.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .reset-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .reset-title {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+
+            .reset-subtitle {
+                font-size: 14px;
+                margin-bottom: 36px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                font-size: 17px;
+            }
+
+            .reset-button {
+                height: 60px;
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reset-container {
+                padding: 25px 15px;
+            }
+
+            .reset-title {
+                font-size: 28px;
+            }
+
+            .reset-subtitle {
+                font-size: 13px;
+            }
+
+            .form-label {
+                font-size: 16px;
+            }
+
+            .reset-button {
+                height: 50px;
+                font-size: 16px;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="reset-container">
+        <h1 class="reset-title">Reset Password</h1>
+        <p class="reset-subtitle">"Enter your email address and we'll send you a link to reset your password"</p>
+        
+        <form id="resetForm">
+            <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input" 
+                    placeholder="Enter your email address"
+                    required
+                >
+            </div>
+            
+            <div class="back-to-login">
+                <a href="login3.html" class="back-to-login-link" id="backToLoginLink">Back to Login</a>
+            </div>
+            
+            <button type="submit" class="reset-button" id="resetButton">
+                <span id="buttonText" onclick="window.location.href='enterCode.html'">Send Reset Code</span>
+                <span id="spinner" class="spinner hidden"></span>
+            </button>
+            
+            <div class="message success-message" id="successMessage">
+                Password reset link has been sent to your email address. Please check your inbox and follow the instructions.
+            </div>
+            
+            <div class="message error-message" id="errorMessage">
+                Please enter a valid email address.
+            </div>
+        </form>
+    </div>
+
+    <script>
+document.getElementById("resetForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    if (!email) {
+        alert("Please enter your email");
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:3000/api/auth/forgot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message || "Verification code sent to email");
+            localStorage.setItem("resetEmail", email);
+            window.location.href = "enterCode.html";
+        } else {
+            alert(data.message || "Failed to send verification code");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
+});
+</script>
+
+</body>
+</html>

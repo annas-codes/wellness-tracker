@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+            opacity: 0; /* Hidden but space reserved */
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #357a63;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(53, 122, 99, 0.3);
+        }
+
+        .notifications-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .notifications-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .notifications-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .notifications-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: transparent;
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #357a63;
+            color: white;
+        }
+
+        .notifications-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .notification-item {
+            background: rgba(53, 122, 99, 0.05);
+            border: 1px solid rgba(53, 122, 99, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.1);
+        }
+
+        .notification-item.unread {
+            border-left: 4px solid #357a63;
+            background: rgba(53, 122, 99, 0.08);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .notification-message {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .notification-type {
+            display: inline-block;
+            background: #357a63;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .mark-read-btn {
+            background: #357a63;
+            color: white;
+        }
+
+        .mark-read-btn:hover {
+            background: #2d6b56;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .clear-all-btn {
+            background: #ef4444;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-all-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .notifications-card {
+                padding: 1.5rem;
+            }
+
+            .notifications-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .notification-filters {
+                justify-content: center;
+            }
+
+            .notification-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .notification-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .notifications-card {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 12px;
+            }
+
+            .notification-item {
+                padding: 1rem;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="set-reminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminders.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="charts.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">🔔</span>
+                        Notifications
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <span class="nav-icon">👤</span>
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="edit-profile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+                <li><button class="filter-btn" style="margin-left: 4vw;" >Logout</button> </li>
+            </ul>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <button class="back-button" onclick="history.back()" title="Go Back">
+                ←
+            </button>
+
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Notifications</h2>
+                <div></div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="notifications-card">
+                <div class="notifications-header">
+                    <h1>Notifications</h1>
+                    <p>Stay updated with your wellness journey</p>
+                </div>
+
+                <div class="notification-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="unread">Unread</button>
+                    <button class="filter-btn" data-filter="reminders">Reminders</button>
+                    <button class="filter-btn" data-filter="achievements">Achievements</button>
+                </div>
+
+                <button class="clear-all-btn" onclick="clearAllNotifications()">
+                    Clear All Notifications
+                </button>
+
+                <div class="notifications-list" id="notificationsList">
+                    <!-- Notifications will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-hidden');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('mobile-hidden');
+            overlay.classList.remove('active');
+        });
+
+        // Sample notifications data
+        let notifications = [
+            {
+                id: 1,
+                title: "Water Reminder",
+                message: "Time to drink water! Stay hydrated for better health.",
+                type: "reminders",
+                time: "2 minutes ago",
+                unread: true
+            },
+            {
+                id: 2,
+                title: "Daily Goal Achieved!",
+                message: "Congratulations! You've completed your daily water intake goal.",
+                type: "achievements",
+                time: "1 hour ago",
+                unread: true
+            },
+            {
+                id: 3,
+                title: "Sleep Reminder",
+                message: "It's time to prepare for bed. Good sleep is essential for recovery.",
+                type: "reminders",
+                time: "3 hours ago",
+                unread: false
+            },
+            {
+                id: 4,
+                title: "Weekly Progress",
+                message: "You've improved your sleep quality by 15% this week!",
+                type: "achievements",
+                time: "1 day ago",
+                unread: false
+            },
+            {
+                id: 5,
+                title: "Meal Reminder",
+                message: "Don't forget to log your lunch for accurate nutrition tracking.",
+                type: "reminders",
+                time: "2 days ago",
+                unread: false
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // Load notifications from localStorage or use sample data
+        function initializeNotifications() {
+            const stored = localStorage.getItem('notifications');
+            if (!stored) {
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+            } else {
+                notifications = JSON.parse(stored);
+            }
+        }
+
+        // Display notifications
+        function displayNotifications(filter = 'all') {
+            const notificationsList = document.getElementById('notificationsList');
+            let filteredNotifications = notifications;
+
+            if (filter === 'unread') {
+                filteredNotifications = notifications.filter(n => n.unread);
+            } else if (filter !== 'all') {
+                filteredNotifications = notifications.filter(n => n.type === filter);
+            }
+
+            if (filteredNotifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔔</div>
+                        <h3>No notifications</h3>
+                        <p>You're all caught up! No ${filter === 'all' ? '' : filter} notifications to show.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notificationsList.innerHTML = filteredNotifications.map(notification => `
+                <div class="notification-item ${notification.unread ? 'unread' : ''}" data-id="${notification.id}">
+                    <div class="notification-header">
+                        <div>
+                            <div class="notification-title">${notification.title}</div>
+                            <span class="notification-type">${notification.type}</span>
+                        </div>
+                        <div class="notification-time">${notification.time}</div>
+                    </div>
+                    
+                    <div class="notification-message">${notification.message}</div>
+                    
+                    <div class="notification-actions">
+                        ${notification.unread ? `
+                            <button class="action-btn mark-read-btn" onclick="markAsRead(${notification.id})">
+                                Mark as Read
+                            </button>
+                        ` : ''}
+                        <button class="action-btn delete-btn" onclick="deleteNotification(${notification.id})">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter notifications
+        function setupFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    displayNotifications(currentFilter);
+                });
+            });
+        }
+
+        // Mark notification as read
+        function markAsRead(id) {
+            const notificationIndex = notifications.findIndex(n => n.id === id);
+            if (notificationIndex !== -1) {
+                notifications[notificationIndex].unread = false;
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                displayNotifications(currentFilter);
+            }
+        }
+
+        // Delete notification
+        function deleteNotification(id) {
+            if (confirm('Are you sure you want to delete this notification?')) {
+                notifications = notifications.filter(n => n.id !== id);
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                displayNotifications(currentFilter);
+            }
+        }
+
+        // Clear all notifications
+        function clearAllNotifications() {
+            if (confirm('Are you sure you want to clear all notifications?')) {
+                notifications = [];
+                localStorage.setItem('notifications', JSON.stringify(notifications));
+                displayNotifications(currentFilter);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeNotifications();
+            displayNotifications();
+            setupFilters();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-hidden');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('mobile-hidden');
+            }
+        });
+
+        // Initialize sidebar state based on screen size
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('mobile-hidden');
+        }
+    </script>
+</body>
+</html>

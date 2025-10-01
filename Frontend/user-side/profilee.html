@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px; /* Reserve space for logo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+            opacity: 0; /* Hidden but space reserved */
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #357a63;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(53, 122, 99, 0.3);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .profile-picture {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #357a63;
+            box-shadow: 0 4px 20px rgba(53, 122, 99, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(53, 122, 99, 0.4);
+        }
+
+        .picture-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #357a63;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(53, 122, 99, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .picture-edit-btn:hover {
+            background: #2d6b56;
+            transform: scale(1.1);
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: rgba(53, 122, 99, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(53, 122, 99, 0.1);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .edit-btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            background: #357a63;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(53, 122, 99, 0.4);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .profile-card {
+                padding: 1.5rem;
+            }
+
+            .profile-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-picture {
+                width: 120px;
+                height: 120px;
+            }
+
+            .picture-edit-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .profile-info {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .info-item {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-card {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 12px;
+            }
+
+            .profile-picture {
+                width: 100px;
+                height: 100px;
+            }
+
+            .picture-edit-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .info-value {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: transparent;
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #357a63;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setRreminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminders.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                
+                
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+                <li><button class="filter-btn" style="margin-left: 4vw;" >Logout</button> </li>
+            </ul>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <button class="back-button" onclick="history.back()" title="Go Back">
+                ←
+            </button>
+
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Profile</h2>
+                <div></div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <h1>My Profile</h1>
+                    <p>Your wellness journey overview</p>
+                </div>
+
+                <div class="profile-picture">
+                    <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" 
+                         alt="Profile Picture" class="profile-img" id="profileImg">
+                    <button type="button" class="picture-edit-btn" id="pictureEditBtn" title="Change Picture">📷</button>
+                    <input type="file" id="pictureInput" class="hidden-input" accept="image/*">
+                </div>
+
+                <div class="profile-info">
+                    <div class="info-item">
+                        <div class="info-label">Name</div>
+                        <div class="info-value" id="userName">John Doe</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Age</div>
+                        <div class="info-value" id="userAge">28 years</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Weight</div>
+                        <div class="info-value" id="userWeight">75 kg</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Height</div>
+                        <div class="info-value" id="userHeight">180 cm</div>
+                    </div>
+                </div>
+
+                <a href="edit-profile.html" class="edit-btn">
+                    Edit Profile
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-hidden');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('mobile-hidden');
+            overlay.classList.remove('active');
+        });
+
+        // Load profile data from localStorage
+        function loadProfileData() {
+            const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                name: 'John Doe',
+                age: '28',
+                weight: '75',
+                height: '180',
+                picture: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop'
+            };
+
+            document.getElementById('userName').textContent = profileData.name;
+            document.getElementById('userAge').textContent = profileData.age + ' years';
+            document.getElementById('userWeight').textContent = profileData.weight + ' kg';
+            document.getElementById('userHeight').textContent = profileData.height + ' cm';
+            document.getElementById('profileImg').src = profileData.picture;
+        }
+
+        // Initialize profile data on page load
+        document.addEventListener('DOMContentLoaded', loadProfileData);
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-hidden');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('mobile-hidden');
+            }
+        });
+
+        // Initialize sidebar state based on screen size
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('mobile-hidden');
+        }
+    </script>
+        // Picture edit functionality
+        const pictureEditBtn = document.getElementById('pictureEditBtn');
+        const pictureInput = document.getElementById('pictureInput');
+        const profileImg = document.getElementById('profileImg');
+
+        // Click on edit button or image to change picture
+        pictureEditBtn.addEventListener('click', () => {
+            pictureInput.click();
+        });
+
+        profileImg.addEventListener('click', () => {
+            pictureInput.click();
+        });
+
+        // Handle picture change
+        pictureInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImg.src = e.target.result;
+                    
+                    // Save the new picture to localStorage
+                    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+                        name: 'John Doe',
+                        age: '28',
+                        weight: '75',
+                        height: '180',
+                        picture: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop'
+                    };
+                    
+                    profileData.picture = e.target.result;
+                    localStorage.setItem('profileData', JSON.stringify(profileData));
+                    
+                    // Show a brief success indication
+                    pictureEditBtn.style.background = '#22c55e';
+                    pictureEditBtn.textContent = '✓';
+                    
+                    setTimeout(() => {
+                        pictureEditBtn.style.background = '#357a63';
+                        pictureEditBtn.textContent = '📷';
+                    }, 1500);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Saved - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+            animation: checkmarkPop 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes checkmarkPop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.7s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .security-tips {
+            background: rgba(53, 122, 99, 0.05);
+            border: 1px solid rgba(53, 122, 99, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            animation: fadeInUp 0.6s ease-out 0.9s both;
+        }
+
+        .security-tips h3 {
+            color: #357a63;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .security-tips h3::before {
+            content: "🔒";
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .security-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .security-tips li {
+            color: #555;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .security-tips li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            animation: fadeInUp 0.6s ease-out 1.1s both;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: #357a63;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d6b56;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(53, 122, 99, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(53, 122, 99, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .countdown-timer {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+            animation: fadeInUp 0.6s ease-out 1.3s both;
+        }
+
+        .countdown-number {
+            font-weight: 600;
+            color: #357a63;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+
+            .success-message {
+                font-size: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .security-tips {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .success-container {
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+
+            .success-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+
+            .success-title {
+                font-size: 1.3rem;
+            }
+
+            .security-tips li {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading animation for buttons */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon" id="successIcon">
+            ✓
+        </div>
+        
+        <h1 class="success-title">Password Saved Successfully!</h1>
+        
+        <p class="success-message">
+            Your new password has been securely saved. Your account is now protected with enhanced security.
+        </p>
+
+        <div class="security-tips">
+            <h3>Security Reminders</h3>
+            <ul>
+                <li>Keep your password confidential and don't share it with anyone</li>
+                <li>Use a unique password for your wellness account</li>
+                <li>Consider enabling two-factor authentication for extra security</li>
+                <li>Update your password regularly for optimal security</li>
+            </ul>
+        </div>
+
+        <div class="action-buttons">
+            <a href="profile.html" class="btn btn-primary" id="continueBtn">
+                Continue to Profile
+            </a>
+            <a href="#" class="btn btn-secondary" onclick="goToLogin()">
+                Go to Login
+            </a>
+        </div>
+
+        <!-- <div class="countdown-timer" id="countdownTimer">
+            Redirecting to your profile in <span class="countdown-number" id="countdown">10</span> seconds...
+        </div> -->
+    </div>
+
+    <script>
+        // Countdown timer for auto-redirect
+        let countdown = 10;
+        const countdownElement = document.getElementById('countdown');
+        const timerElement = document.getElementById('countdownTimer');
+        const continueBtn = document.getElementById('continueBtn');
+
+        // function updateCountdown() {
+        //     countdownElement.textContent = countdown;
+        //     countdown--;
+
+        //     if (countdown < 0) {
+        //         // Auto-redirect to profile page
+        //         continueBtn.classList.add('loading');
+        //         setTimeout(() => {
+        //             window.location.href = 'profile.html';
+        //         }, 500);
+        //         return;
+        //     }
+
+        //     setTimeout(updateCountdown, 1000);
+        // }
+
+        // Start countdown
+        setTimeout(updateCountdown, 2000);
+
+        // Handle continue button click
+        continueBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            continueBtn.classList.add('loading');
+            
+            setTimeout(() => {
+                window.location.href = 'profilee.html';
+            }, 800);
+        });
+
+        // Go to login function
+        function goToLogin() {
+            // You can replace this with your actual login page URL
+            window.location.href = 'login3.html';
+        }
+
+        // Add click effect to success icon
+        document.getElementById('successIcon').addEventListener('click', () => {
+            const icon = document.getElementById('successIcon');
+            icon.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                icon.style.transform = 'scale(1)';
+            }, 200);
+        });
+
+        // Prevent accidental navigation away
+        let hasInteracted = false;
+
+        document.addEventListener('click', () => {
+            hasInteracted = true;
+        });
+
+        window.addEventListener('beforeunload', (e) => {
+            if (!hasInteracted) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                continueBtn.click();
+            } else if (e.key === 'Escape') {
+                goToLogin();
+            }
+        });
+
+        // Add success sound effect (optional)
+        function playSuccessSound() {
+            // Create a simple success sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        // Play success sound on page load (with user interaction check)
+        document.addEventListener('click', () => {
+            if (!hasInteracted) {
+                try {
+                    playSuccessSound();
+                } catch (e) {
+                    // Ignore audio errors
+                }
+                hasInteracted = true;
+            }
+        }, { once: true });
+
+        // Add smooth scroll behavior for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause countdown when page is not visible
+                countdown += 1;
+            }
+        });
+    </script>
+</body>
+</html>

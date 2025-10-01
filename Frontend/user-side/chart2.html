@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .logout-btn {
+            margin: 1rem;
+            text-align: center;
+        }
+
+        .logout-btn .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 80%;
+        }
+
+        .logout-btn .filter-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .user-info-banner {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #357a63;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendations h3 {
+            color: #357a63;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #357a63;
+        }
+
+        .recommendation-icon {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+        }
+
+        .recommendation-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .charts-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .time-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .chart-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .chart-icon {
+            margin-right: 0.75rem;
+            font-size: 1.5rem;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 300px;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 12px;
+            position: relative;
+            overflow: visible;
+            padding: 1rem 1rem 3rem 1rem;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: calc(100% - 40px);
+            gap: 0.5rem;
+            margin-bottom: 40px;
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, #357a63, #4a9b7e);
+            border-radius: 4px 4px 0 0;
+            min-width: 35px;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(53, 122, 99, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-bar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(53, 122, 99, 0.4);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #357a63;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            width: 50px;
+            font-weight: 500;
+        }
+
+        .chart-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .chart-stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 8px;
+        }
+
+        .chart-stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #357a63;
+            margin-bottom: 0.25rem;
+        }
+
+        .chart-stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .no-data-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .chart-card {
+                padding: 1.5rem;
+            }
+
+            .chart-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .time-filter {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .bar-label {
+                font-size: 0.7rem;
+                width: 40px;
+            }
+
+            .bar-value {
+                font-size: 0.7rem;
+                padding: 2px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .chart-card {
+                padding: 1rem;
+            }
+
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-canvas {
+                height: 250px;
+            }
+
+            .chart-bars {
+                gap: 0.25rem;
+            }
+
+            .chart-bar {
+                min-width: 25px;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboardNew.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart2.html" class="nav-link active">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setReminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminder.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+            </ul>
+            <div class="logout-btn">
+                <button class="filter-btn" id="logoutBtn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Charts</h2>
+                <div></div>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Wellness Progress Charts</h1>
+                <p>Visualize your health journey with personalized insights</p>
+            </div>
+
+            <!-- User Info Banner -->
+            <div class="user-info-banner">
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="userAge">--</div>
+                        <div class="stat-label">Age</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userWeight">--</div>
+                        <div class="stat-label">Weight (kg)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userHeight">--</div>
+                        <div class="stat-label">Height (cm)</div>
+                    </div>
+                    <!-- <div class="stat-item">
+                        <div class="stat-value" id="userBMI">--</div>
+                        <div class="stat-label">BMI</div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Recom//mendations
+            <div class="recommendations">
+                <h3>📊 Chart Insights & Recommendations</h3>
+                <div id="recommendationsList">
+                    Recommendations will be populated by JavaScript
+                </div>
+            </div> -->
+
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <div class="time-filter">
+                    <button class="filter-btn active" data-period="week">This Week</button>
+                    <!-- <button class="filter-btn" data-period="month">This Month</button>
+                    <button class="filter-btn" data-period="year">This Year</button> -->
+                </div>
+
+                <div class="charts-grid">
+                    <!-- Water Intake Chart -->
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <span class="chart-icon">💧</span>
+                            Water Intake Progress
+                        </div>
+                        <div class="chart-canvas" id="waterChart">
+                            <div class="chart-bars" id="waterBars">
+                                <!-- Bars will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="waterAvg">0ml</div>
+                                <div class="chart-stat-label">Average</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="waterBest">0ml</div>
+                                <div class="chart-stat-label">Best Day</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="waterGoalMet">0%</div>
+                                <div class="chart-stat-label">Goal Met</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Food Intake Chart -->
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <span class="chart-icon">🍎</span>
+                            Calorie Intake Tracking
+                        </div>
+                        <div class="chart-canvas" id="foodChart">
+                            <div class="chart-bars" id="foodBars">
+                                <!-- Bars will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="foodAvg">0 kcal</div>
+                                <div class="chart-stat-label">Avg Calories</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="foodHighest">0 kcal</div>
+                                <div class="chart-stat-label">Highest</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="foodGoalMet">0%</div>
+                                <div class="chart-stat-label">Goal Met</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sleep Tracking Chart -->
+                    <div class="chart-card">
+                        <div class="chart-title">
+                            <span class="chart-icon">😴</span>
+                            Sleep Quality Analysis
+                        </div>
+                        <div class="chart-canvas" id="sleepChart">
+                            <div class="chart-bars" id="sleepBars">
+                                <!-- Bars will be generated by JavaScript -->
+                            </div>
+                        </div>
+                        <div class="chart-stats">
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="sleepAvg">0h</div>
+                                <div class="chart-stat-label">Average</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="sleepBest">0h</div>
+                                <div class="chart-stat-label">Best Night</div>
+                            </div>
+                            <div class="chart-stat-item">
+                                <div class="chart-stat-value" id="sleepGoalMet">0%</div>
+                                <div class="chart-stat-label">Goal Met</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+   <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) { window.location.href = "login3.html"; return; }
+  const base = "http://localhost:3000";
+
+  async function api(path, opts={}) {
+    opts.headers = Object.assign({}, opts.headers||{}, {
+      "Content-Type":"application/json",
+      "Authorization":"Bearer "+token
+    });
+    const res = await fetch(base+path, opts);
+    if (res.status === 401) { 
+      localStorage.removeItem('token'); 
+      window.location.href='login3.html'; 
+      throw new Error('Unauthorized'); 
+    }
+    return res;
+  }
+
+  // Fetch profile to show stats + goals
+  let goals = { water:2000, food:2000, sleep:8 };
+  try {
+    const pres = await api("/api/profile");
+    const pdata = await pres.json();
+    if (pres.ok && pdata.user) {
+      const u = pdata.user;
+      document.getElementById("userAge").textContent = u.age ?? "--";
+      document.getElementById("userWeight").textContent = u.weight ?? "--";
+      document.getElementById("userHeight").textContent = u.height ?? "--";
+      if (u.weight && u.height) {
+        const bmi = (u.weight / ((u.height/100)**2)).toFixed(1);
+        document.getElementById("userBMI").textContent = bmi;
+      } else {
+        document.getElementById("userBMI").textContent = "--";
+      }
+      if (u.goals) goals = u.goals;
+    }
+  } catch (e) { console.warn("Profile fetch failed", e); }
+
+  // Fetch weekly tracking
+  try {
+    const tres = await api("/api/tracking/weekly");
+    if (!tres.ok) { console.error("weekly fetch failed", await tres.text()); return; }
+    const tdata = await tres.json();
+    const arr = tdata.trackingData || [];
+    const water = Array(7).fill(0), food = Array(7).fill(0), sleep = Array(7).fill(0), labels = [];
+    const today = new Date(); today.setHours(0,0,0,0);
+    for (let i=6;i>=0;i--) {
+      const d = new Date(today); d.setDate(today.getDate()-(6-i));
+      labels.push(d.toLocaleDateString(undefined,{weekday:'short'}));
+    }
+    arr.forEach(doc => {
+      const docDate = new Date(doc.date); docDate.setHours(0,0,0,0);
+      const idx = labels.findIndex((_,i) => {
+        const comp = new Date(today); comp.setDate(today.getDate() - (6 - i)); comp.setHours(0,0,0,0);
+        return comp.getTime() === docDate.getTime();
+      });
+      if (idx !== -1) {
+        water[idx] = doc.water?.amount || 0;
+        food[idx] = doc.food?.calories || 0;
+        sleep[idx] = doc.sleep?.hours || 0;
+      }
+    });
+
+    function renderBars(containerId, data, unit) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      const maxVal = Math.max(...data, 1);
+      data.forEach((v,i) => {
+        const bar = document.createElement("div");
+        bar.className = "chart-bar";
+        bar.style.height = Math.max((v/maxVal)*100,5) + "%";
+        bar.innerHTML = `<div class="bar-value">${v}${unit}</div><div class="bar-label">${labels[i]}</div>`;
+        container.appendChild(bar);
+      });
+    }
+    renderBars("waterBars", water, "ml");
+    renderBars("foodBars", food, "kcal");
+    renderBars("sleepBars", sleep, "h");
+
+    function statsFrom(arr) {
+      const valid = arr.filter(x=>x!==undefined && x!==null);
+      const avg = valid.length ? Math.round(valid.reduce((a,b)=>a+b,0)/valid.length) : 0;
+      const best = valid.length ? Math.max(...valid) : 0;
+      return {avg, best};
+    }
+    const wStats = statsFrom(water);
+    document.getElementById("waterAvg").textContent = `${wStats.avg}ml`;
+    document.getElementById("waterBest").textContent = `${wStats.best}ml`;
+    const fStats = statsFrom(food);
+    document.getElementById("foodAvg").textContent = `${fStats.avg} kcal`;
+    document.getElementById("foodHighest").textContent = `${fStats.best} kcal`;
+    const sStats = statsFrom(sleep);
+    document.getElementById("sleepAvg").textContent = `${sStats.avg}h`;
+    document.getElementById("sleepBest").textContent = `${sStats.best}h`;
+
+  } catch (err) {
+    console.error("Chart load error", err);
+  }
+
+  document.getElementById("logoutBtn").addEventListener("click", ()=> {
+    if (confirm("Logout?")) { 
+      localStorage.removeItem("token"); 
+      window.location.href='login3.html'; 
+    }
+  });
+});
+</script>
+
+
+</body>
+</html>

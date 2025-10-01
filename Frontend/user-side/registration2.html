@@ -1,0 +1,452 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Mirza:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6c9a8b 0%, #40866f 100%);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .main-container {
+            width: 80vw;
+            height: 75vh;
+            min-height: 600px;
+            max-width: 1200px;
+            display: flex;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            background: transparent;
+        }
+
+        .left-panel {
+            flex: 1;
+            background: rgba(108, 154, 139, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .left-panel h1 {
+            font-family: 'Mirza', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            color: #f4f0e1;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .left-panel p {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: #f4f0e1;
+            line-height: 1.6;
+            max-width: 90%;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(64, 134, 111, 0.95) 0%, rgba(9, 78, 55, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .form-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            color: white;
+            font-size: clamp(0.9rem, 1.2vw, 1rem);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid white;
+            padding: 10px 0;
+            color: white;
+            font-size: clamp(0.9rem, 1.1vw, 1rem);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-bottom-color: #f4f0e1;
+            transform: scale(1.02);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .signup-btn {
+            width: 100%;
+            height: clamp(50px, 6vh, 60px);
+            background: #40866f;
+            border: 1px solid #f4f0e1;
+            border-radius: 10px;
+            color: #f4f0e1;
+            font-size: clamp(1rem, 1.3vw, 1.2rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .signup-btn:hover {
+            background: #357a63;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            color: white;
+            font-size: clamp(0.8rem, 1vw, 0.9rem);
+        }
+
+        .login-btn {
+            background: none;
+            border: none;
+            color: #f4f0e1;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: inherit;
+            margin-left: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(244, 240, 225, 0.5);
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+            z-index: 1000;
+            max-width: 300px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .alert.success { background: #40866f; }
+        .alert.error { background: #d32f2f; }
+        .alert.info { background: #6c9a8b; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                width: 95vw;
+                height: 85vh;
+                flex-direction: column;
+                min-height: 500px;
+            }
+
+            .left-panel {
+                flex: 0 0 35%;
+                padding: 20px 15px;
+            }
+
+            .right-panel {
+                flex: 1;
+                padding: 25px 20px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                width: 98vw;
+                height: 90vh;
+                border-radius: 15px;
+            }
+
+            .left-panel {
+                flex: 0 0 30%;
+                padding: 15px 10px;
+            }
+
+            .right-panel {
+                padding: 20px 15px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+        }
+
+        /* Landscape mobile orientation */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .main-container {
+                height: 95vh;
+                flex-direction: row;
+            }
+
+            .left-panel {
+                flex: 0 0 40%;
+            }
+
+            .right-panel {
+                padding: 20px 25px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <h1>Let's Get Started</h1>
+            <p>
+                "Sign up now and take the first step towards a healthier, happier you!"<br><br>
+                "Join today – your wellness journey starts here!"
+            </p>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <h2 class="form-title">Sign Up</h2>
+            
+            <form id="registrationForm" action="register" method="post">
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Create Password</label>
+                    <input type="password" id="password" name="password" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Repeat Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required>
+                </div>
+                
+                <button type="submit" class="signup-btn" >Sign Up</button>
+                
+                <div class="login-link" onclick="window.location.href='login3.html'">
+                    Already a Member?
+                    <button type="button" class="login-btn" onclick="handleLogin()">Log In here</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Form handling
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value
+            };
+            
+            if (validateForm(formData)) {
+                handleSignUp(formData);
+            }
+        });
+
+        function validateForm(data) {
+            if (!data.name || !data.email || !data.password || !data.confirmPassword) {
+                showAlert('Please fill in all fields', 'error');
+                return false;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                showAlert('Please enter a valid email address', 'error');
+                return false;
+            }
+            
+            if (data.password.length < 6) {
+                showAlert('Password must be at least 6 characters long', 'error');
+                return false;
+            }
+            
+            if (data.password !== data.confirmPassword) {
+                showAlert('Passwords do not match', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function handleSignUp(data) {
+            const submitBtn = document.querySelector('.signup-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Signing Up...';
+            submitBtn.disabled = true;
+            
+            fetch('http://localhost:3000/api/auth/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            password: data.password
+        })
+    })
+    .then(async (response) => {
+        const result = await response.json();
+
+        if (response.ok) {
+            showAlert('✅ Registration successful!', 'success');
+            document.getElementById('registrationForm').reset();
+            setTimeout(() => {
+                window.location.href = 'editprofile.html'; // or wherever you want to go
+            }, 1000);
+        } else {
+            showAlert(result.message || '❌ Registration failed', 'error');
+        }
+    })
+    .catch((error) => {
+        showAlert('❌ Server error. Please try again.', 'error');
+        console.error(error);
+    })
+    .finally(() => {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    });
+}
+        // function handleLogin() {
+        //     showAlert('Redirecting to login page...', 'info');
+        // }
+
+        function showAlert(message, type = 'error') {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Input focus effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Button interaction effects
+        document.querySelector('.signup-btn').addEventListener('mousedown', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(0px) scale(0.98)';
+            }
+        });
+
+        document.querySelector('.signup-btn').addEventListener('mouseup', function() {
+            if (!this.disabled) {
+                this.style.transform = 'translateY(-2px) scale(1)';
+            }
+        });
+
+        // Ensure proper sizing on load and resize
+        function adjustLayout() {
+            const container = document.querySelector('.main-container');
+            const vh = window.innerHeight;
+            const vw = window.innerWidth;
+            
+            // Ensure minimum dimensions
+            if (vh < 600) {
+                container.style.minHeight = '500px';
+            }
+            if (vw < 400) {
+                container.style.minWidth = '350px';
+            }
+        }
+
+        window.addEventListener('resize', adjustLayout);
+        window.addEventListener('load', adjustLayout);
+        window.addEventListener('orientationchange', adjustLayout);
+    </script>
+</body>
+</html>

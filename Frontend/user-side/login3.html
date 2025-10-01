@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #357a63;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(108, 154, 139, 0.38);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 46px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .login-btn {
+            background: none;
+            border: none;
+            color: #f4f0e1;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: inherit;
+            margin-left: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .login-link {
+            text-align: center;
+            color: white;
+            font-size: clamp(0.8rem, 1vw, 0.9rem);
+        }
+        .login-btn:hover {
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(244, 240, 225, 0.5);
+        }
+
+        .login-subtitle {
+            font-size: 15px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 48px;
+            line-height: 1.2;
+            max-width: 386px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 19px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid white;
+            padding: 8px 0;
+            font-size: 16px;
+            color: white;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-input:focus {
+            border-bottom-color: #f4f0e1;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 32px;
+        }
+
+        .forgot-password-link {
+            color: rgba(238, 136, 221, 0.61);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password-link:hover {
+            color: rgba(238, 136, 221, 0.8);
+        }
+
+        .login-button {
+            width: 100%;
+            height: 80px;
+            background-color: #40866f;
+            border: 1px solid #f4f0e1;
+            border-radius: 10px;
+            color: #f4f0e1;
+            font-size: 19px;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: 8px 8px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .login-title {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+
+            .login-subtitle {
+                font-size: 14px;
+                margin-bottom: 36px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                font-size: 17px;
+            }
+
+            .login-button {
+                height: 60px;
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px 15px;
+            }
+
+            .login-title {
+                font-size: 28px;
+            }
+
+            .login-subtitle {
+                font-size: 13px;
+            }
+
+            .form-label {
+                font-size: 16px;
+            }
+
+            .login-button {
+                height: 50px;
+                font-size: 16px;
+            }
+        }
+
+        /* Success message styles */
+        .success-message {
+            display: none;
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper .form-input {
+    flex: 1;
+    padding-right: 100px; /* space for eye icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 2vw;
+    cursor: pointer;
+    font-size: 18px;
+    color: white;
+    user-select: none;
+    transition: 0.3s;
+}
+
+.toggle-password:hover {
+    color: #f4f0e1;
+}
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-title">Log In</h1>
+        <p class="login-subtitle">"Log in to continue your wellness journey!"</p>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input" 
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    class="form-input" 
+                    placeholder="Enter your password"
+                    required
+                >
+                <span class="toggle-password" onclick="togglePassword()">👁</span>
+            </div>
+            
+            <div class="forgot-password">
+                <a href="#" class="forgot-password-link" id="forgotPasswordLink"
+                onclick="window.location.href='resetpage.html'"> Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="login-button" >Log In</button>
+            
+             <div class="login-link" onclick="window.location.href='registration2.html'">
+                    Don't have an account?
+                    <button type="button" class="login-btn" onclick="handleSignUp()">Sign up here</button>
+                </div>
+
+            <div class="success-message" id="successMessage">
+                Login successful! Welcome back!
+            </div>
+        </form>
+    </div>
+
+
+    <script>
+
+        // can't go back to login without logout
+    // Redirect user to dashboard if already logged in
+    if (localStorage.getItem('token')) {
+        window.location.replace('dashboardNew.html');
+    }
+
+
+
+        // Get form elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.querySelector('.login-button');
+        const successMessage = document.getElementById('successMessage');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+
+        function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.querySelector('.toggle-password');
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.textContent = "🙈"; // change icon
+    } else {
+        passwordInput.type = "password";
+        toggleIcon.textContent = "👁"; // change back
+    }
+}
+
+
+        // Handle form submission
+        // Handle form submission
+loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    // Basic validation
+    if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    if (!isValidEmail(email)) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    // Simulate login process
+    loginButton.textContent = 'Logging in...';
+    loginButton.disabled = true;
+    
+    // Simulate API call delay
+    // Step: Submit login to backend
+fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password })
+})
+.then(async response => {
+    const data = await response.json();
+    if (response.ok) {
+        // ✅ Login successful
+        alert("Login successful!");
+        localStorage.setItem('token', data.token); // optional
+        window.location.href = 'dashboardNew.html';
+    } else {
+        // ❌ Login failed
+        alert(data.message || 'Invalid email or password');
+    }
+})
+.catch(err => {
+    console.error(err);
+    alert('An error occurred. Please try again.');
+})
+.finally(() => {
+    loginButton.textContent = 'Log In';
+    loginButton.disabled = false;
+});
+
+});
+
+        // Handle forgot password link
+        // forgotPasswordLink.addEventListener('click', function(e) {
+        //     e.preventDefault();
+        //     alert('Forgot password functionality would be implemented here.\nPlease contact support for password reset.');
+        // });
+
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Add input focus effects
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderBottomColor = '#f4f0e1';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.borderBottomColor = 'white';
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+                const inputs = Array.from(document.querySelectorAll('.form-input'));
+                const currentIndex = inputs.indexOf(document.activeElement);
+                
+                if (currentIndex >= 0 && currentIndex < inputs.length - 1) {
+                    inputs[currentIndex + 1].focus();
+                } else if (currentIndex === inputs.length - 1) {
+                    loginButton.focus();
+                }
+            }
+        });
+
+        // Add loading animation to button
+        function addLoadingAnimation() {
+            const button = loginButton;
+            let dots = '';
+            const loadingInterval = setInterval(() => {
+                dots = dots.length >= 3 ? '' : dots + '.';
+                if (button.textContent.includes('Logging in')) {
+                    button.textContent = 'Logging in' + dots;
+                } else {
+                    clearInterval(loadingInterval);
+                }
+            }, 500);
+        }
+
+        // Enhanced form submission with loading animation
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addLoadingAnimation();
+        });
+    </script>
+</body>
+</html>

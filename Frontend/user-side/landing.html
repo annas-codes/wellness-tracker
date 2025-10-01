@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Fitness Goals - Wellness Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #6c9a8b;
+            color: #f4f0e1;
+            line-height: 1.2;
+        }
+
+        /* Typography */
+        .hero-title, .section-title {
+            font-size: 46px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        .card-title {
+            font-size: 37px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        .benefit-title {
+            font-size: 29px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        .card-description {
+            font-size: 23px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        .benefit-description {
+            font-size: 19px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        .hero-description {
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 120%;
+            color: #f4f0e1;
+        }
+
+        /* Layout */
+        .app-container {
+            background-color: #6c9a8b;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .main-wrapper {
+            background-color: #6c9a8b;
+            width: 1440px;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            width: 100%;
+            height: 113px;
+        }
+
+        .header-background {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #7ab7be 0%, #6c9a8b 100%);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .logo {
+            position: absolute;
+            width: 270px;
+            height: 113px;
+            top: 0;
+            left: 120px;
+            object-fit: cover;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            right: 120px;
+            top: 25px;
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Buttons */
+        .btn {
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 29px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            width: 183px;
+            height: 50px;
+            background-color: #6c9a8b;
+            color: #f4f0e1;
+        }
+
+        .btn-outline {
+            width: 183px;
+            height: 50px;
+            background-color: #6c9a8b;
+            border: 1px solid #f4f0e1;
+            color: #f4f0e1;
+        }
+
+        .btn-cta {
+            width: 180px;
+            height: 80px;
+            margin-top: 16px;
+            border: 1px solid #f4f0e1;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.25);
+            background-color: #6c9a8b;
+            color: #f4f0e1;
+        }
+
+        .btn-login {
+            width: 207px;
+            height: 60px;
+            margin-top: 20px;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            margin-top: 130px;
+            padding: 0 120px;
+            gap: 120px;
+            align-items: flex-start;
+        }
+
+        .hero-image {
+            width: 387px;
+            height: 347px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .hero-title {
+            width: 487px;
+        }
+
+        .hero-description {
+            width: 489px;
+        }
+
+        /* Separator */
+        .separator {
+            width: 1430px;
+            height: 8px;
+            margin-top: 50px;
+            background-color: #a5d8d6;
+        }
+
+        /* Programs Section */
+        .programs-section {
+            margin-top: 50px;
+            padding: 0 120px;
+        }
+
+        .section-title {
+            width: 484px;
+            margin-bottom: 50px;
+        }
+
+        .programs-grid {
+            display: flex;
+            gap: 100px;
+        }
+
+        .program-card {
+            width: 305px;
+            height: 317px;
+            position: relative;
+        }
+
+        .card-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #7ab7be 0%, #6c9a8b 100%);
+            border-radius: 8px;
+        }
+
+        .card-content {
+            position: relative;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .card-icon {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            top: 20px;
+            left: 0;
+        }
+
+        .card-icon img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .card-title {
+            position: absolute;
+            width: 183px;
+            top: 22px;
+            left: 102px;
+        }
+
+        .card-description {
+            position: absolute;
+            width: 255px;
+            top: 160px;
+            left: 25px;
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            margin-top: 100px;
+            position: relative;
+            width: 100%;
+            padding: 80px 0;
+        }
+
+        .benefits-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #7ab7be 0%, #6c9a8b 100%);
+        }
+
+        .benefits-content {
+            position: relative;
+            padding: 0 120px;
+            z-index: 1;
+        }
+
+        .benefits-list {
+            margin-top: 60px;
+        }
+
+        .benefit-item {
+            margin-bottom: 70px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .benefit-bullet {
+            width: 17px;
+            height: 17px;
+            margin-top: 10px;
+            margin-right: 25px;
+            background-color: rgba(238, 136, 221, 0.61);
+            transform: rotate(44.53deg);
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .benefit-title {
+            width: 283px;
+        }
+
+        .benefit-description {
+            width: 386px;
+        }
+
+        /* Water Glass */
+        .water-glass-container {
+            position: absolute;
+            width: 485px;
+            height: 485px;
+            top: 206px;
+            right: 220px;
+        }
+
+        .water-glass-bg {
+            position: absolute;
+            width: 485px;
+            height: 450px;
+            top: 18px;
+            left: 0;
+            background-color: #7ab7be;
+            border-radius: 242.5px / 225px;
+        }
+
+        .water-glass-image {
+            position:  centre ;
+            width: 485px;
+            height: 485px;
+            top: 0;
+            left: 0;
+            object-fit: cover;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1440px) {
+            .main-wrapper {
+                width: 100%;
+                max-width: 1440px;
+            }
+            
+            .separator {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .hero-section {
+                padding: 0 60px;
+                gap: 60px;
+            }
+            
+            .programs-section,
+            .benefits-content {
+                padding: 0 60px;
+            }
+            
+            .programs-grid {
+                gap: 50px;
+            }
+            
+            .water-glass-container {
+                right: 60px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .hero-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 40px;
+            }
+            
+            .programs-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 30px;
+            }
+            
+            .water-glass-container {
+                position: relative;
+                right: auto;
+                top: 40px;
+                margin: 0 auto;
+            }
+            
+            .hero-title,
+            .hero-description {
+                width: 100%;
+                max-width: 600px;
+            }
+            
+            .section-title {
+                width: 100%;
+                max-width: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                right: 20px;
+                gap: 8px;
+            }
+            
+            .btn {
+                font-size: 20px;
+            }
+            
+            .btn-primary,
+            .btn-outline {
+                width: 120px;
+                height: 40px;
+            }
+            
+            .hero-section,
+            .programs-section,
+            .benefits-content {
+                padding: 0 20px;
+            }
+            
+            .logo {
+                left: 20px;
+                width: 200px;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .card-title {
+                font-size: 28px;
+            }
+            
+            .water-glass-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .water-glass-bg {
+                width: 300px;
+                height: 280px;
+            }
+            
+            .water-glass-image {
+                width: 300px;
+                height: 300px;
+            }
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="main-wrapper">
+            <!-- Navigation Bar -->
+            <header class="header">
+                
+                <div class="header-background"></div>
+                <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+                <!-- <img class="logo" alt="Logo" src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=270&h=113&fit=crop" /> -->
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" onclick="window.location.href='registration2.html'">Sign Up</button>
+                    <button class="btn btn-outline" onclick="window.location.href='login3.html'" >Login</button>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <img class="hero-image" alt="Healthy food" src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=387&h=347&fit=crop" />
+                <div class="hero-content">
+                    <h1 class="hero-title">Get Ready To Reach Your Fitness Goals</h1>
+                    <p class="hero-description">
+                        Your journey to a healthier, stronger you starts here. We provide
+                        nutrition guidance, and progress tracking to keep you motivated.
+                        Whether you're just starting out or leveling up your routine,
+                        we'll help you stay on track.
+                        <br /><br />
+                        Every glass of water, every meal, counts - let's make them matter
+                        together.
+                    </p>
+                    <button class="btn btn-cta" onclick="window.location.href='registration2.html'">Sign Up</button>
+                </div>
+            </section>
+
+            <!-- Separator -->
+            <div class="separator"></div>
+
+            <!-- Programs Section -->
+            <section class="programs-section">
+                <h2 class="section-title">The Best Programs We Offer For You</h2>
+                <div class="programs-grid">
+                    <div class="program-card">
+                        <div class="card-background"></div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <img alt="Water Intake" src="https://images.pexels.com/photos/416528/pexels-photo-416528.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" />
+                            </div>
+                            <h3 class="card-title">Water Intake</h3>
+                            <p class="card-description">
+                                "Stay hydrated, stay healthy – track your daily water intake and keep your body refreshed!"
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="card-background"></div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <img alt="Sleep Tracker" src="https://images.pexels.com/photos/271897/pexels-photo-271897.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" />
+                            </div>
+                            <h3 class="card-title">Sleep Tracker</h3>
+                            <p class="card-description">
+                                "Sleep better, live better – track your rest and wake up refreshed!"
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="program-card">
+                        <div class="card-background"></div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <img alt="Food Intake" src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" />
+                            </div>
+                            <h3 class="card-title">Food Intake</h3>
+                            <p class="card-description">
+                                "Track your meals, fuel your body – eat smart, live better!"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why Choose Us Section -->
+            <section class="benefits-section">
+                <div class="benefits-background"></div>
+                <div class="benefits-content">
+                    <h2 class="section-title">Why Should People Choose Us</h2>
+                    
+                    <div class="benefits-list">
+                        <div class="benefit-item">
+                            <div class="benefit-bullet"></div>
+                            <div class="benefit-text">
+                                <h3 class="benefit-title">To Track Wellness</h3>
+                                <p class="benefit-description">
+                                    "Track your wellness journey – small steps, big transformations!"
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-bullet"></div>
+                            <div class="benefit-text">
+                                <h3 class="benefit-title">Timely Reminder</h3>
+                                <p class="benefit-description">
+                                    "Timely reminders to keep your wellness on track—never miss a beat!"
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="benefit-item">
+                            <div class="benefit-bullet"></div>
+                            <div class="benefit-text">
+                                <h3 class="benefit-title">To Stay Healthy</h3>
+                                <p class="benefit-description">
+                                    "Stay healthy, stay happy – small efforts, big results!"
+                                </p>
+                                
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+
+                    <button class="btn btn-outline btn-login" onclick="window.location.href='login3.html'">Login</button>
+                    
+                </div>
+                </div>
+
+                
+            </section>
+            
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     // Add click event listeners to buttons
+        //     const buttons = document.querySelectorAll('.btn');
+            
+        //     buttons.forEach(button => {
+        //         button.addEventListener('click', function(e) {
+        //             // Add click animation
+        //             this.style.transform = 'translateY(2px)';
+        //             setTimeout(() => {
+        //                 this.style.transform = 'translateY(-2px)';
+        //             }, 150);
+                    
+        //             // Handle button actions
+        //             const buttonText = this.textContent.trim();
+                    
+        //             if (buttonText === 'Sign Up') {
+        //                 handleSignUp();
+        //             } else if (buttonText === 'Login') {
+        //                 handleLogin();
+        //             }
+        //         });
+                
+      // Simple Button Redirects
+// document.getElementById("registerBtn").addEventListener("click", function() {
+//   window.location.href = "registration2.html";
+// });
+
+// document.getElementById("loginBtn").addEventListener("click", function() {
+//   window.location.href = "login3.html";
+// });
+
+// // Form Submission with Validation
+// document.getElementById("registrationForm").addEventListener("submit", function(e) {
+//   e.preventDefault();
+  
+//   const email = document.getElementById("regEmail").value;
+  
+//   if(validateEmail(email)) {
+//     // Redirect with email as URL parameter
+//     window.location.href = `registration2.html?email=${encodeURIComponent(email)}`;
+//   } else {
+//     alert("Please enter a valid email address");
+//   }
+// });
+
+// // Email validation function
+// function validateEmail(email) {
+//   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   return re.test(email);
+// }
+                // Add hover effects
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = this.classList.contains('btn-cta') || this.classList.contains('btn-login') 
+                        ? '10px 10px 4px rgba(0, 0, 0, 0.25)' 
+                        : 'none';
+                });
+            // });
+            
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe elements for animation
+            const animatedElements = document.querySelectorAll('.program-card, .benefit-item, .hero-content');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+            
+            // Add stagger animation to program cards
+            const programCards = document.querySelectorAll('.program-card');
+            programCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 0.2}s`;
+            });
+            
+            // Add stagger animation to benefit items
+            const benefitItems = document.querySelectorAll('.benefit-item');
+            benefitItems.forEach((item, index) => {
+                item.style.transitionDelay = `${index * 0.15}s`;
+            });
+        
+
+        // Handle Sign Up button click
+        function handleSignUp() {
+            alert('Sign Up functionality would be implemented here!');
+        }
+
+        // Handle Login button click
+        function handleLogin() {
+            alert('Login functionality would be implemented here!');
+        }
+
+        // Add parallax effect to background elements
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.water-glass-container');
+            
+            parallaxElements.forEach(element => {
+                const speed = 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Add loading animation
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Utility function to show notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background-color: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                color: white;
+                border-radius: 5px;
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

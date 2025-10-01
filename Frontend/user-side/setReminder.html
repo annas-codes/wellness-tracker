@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Reminder - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+            opacity: 0; /* Hidden but space reserved */
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #357a63;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(53, 122, 99, 0.3);
+        }
+
+        .reminder-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .reminder-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .reminder-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reminder-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(53, 122, 99, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #357a63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(53, 122, 99, 0.1);
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #999;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            background: #357a63;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(53, 122, 99, 0.4);
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .reminder-card {
+                padding: 1.5rem;
+            }
+
+            .reminder-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .reminder-card {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 12px;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+         .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: transparent;
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #357a63;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboardNew.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart2.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setReminder.html" class="nav-link active">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminder.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                
+               
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+                <!-- <li><button class="filter-btn" style="margin-left: 4vw;" >Logout</button> </li> -->
+            </ul>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <button class="back-button" onclick="history.back()" title="Go Back">
+                ←
+            </button>
+
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Set Reminder</h2>
+                <div></div>
+            </div>
+
+            <!-- Set Reminder Card -->
+            <div class="reminder-card">
+                <div class="reminder-header">
+                    <h1>Set New Reminder</h1>
+                    <p>Create a wellness reminder to stay on track</p>
+                </div>
+
+                <div id="successMessage" class="success-message">
+                    Reminder set successfully! 🎉
+                </div>
+
+                <form id="setReminderForm">
+                    <div class="form-group">
+                        <label for="reminderTitle" class="form-label">Reminder Title</label>
+                        <input type="text" id="reminderTitle" name="reminderTitle" class="form-input" placeholder="Enter reminder title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reminderDescription" class="form-label">Description</label>
+                        <textarea id="reminderDescription" name="reminderDescription" class="form-textarea" placeholder="Enter reminder description"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reminderDate" class="form-label">Date</label>
+                            <input type="date" id="reminderDate" name="reminderDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reminderTime" class="form-label">Time</label>
+                            <input type="time" id="reminderTime" name="reminderTime" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reminderType" class="form-label">Reminder Type</label>
+                        <select id="reminderType" name="reminderType" class="form-select" required>
+                            <option value="">Select reminder type</option>
+                            <option value="exercise">Exercise</option>
+                            <option value="medication">Medication</option>
+                            <option value="water">Drink Water</option>
+                            <option value="meal">Meal Time</option>
+                            <option value="sleep">Sleep</option>
+                            <option value="meditation">Meditation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reminderFrequency" class="form-label">Frequency</label>
+                        <select id="reminderFrequency" name="reminderFrequency" class="form-select" required>
+                            <option value="">Select frequency</option>
+                            <option value="once">Once</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Set Reminder</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-hidden');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('mobile-hidden');
+            overlay.classList.remove('active');
+        });
+
+        // Form submission
+        const setReminderForm = document.getElementById('setReminderForm');
+        const successMessage = document.getElementById('successMessage');
+
+        setReminderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(setReminderForm);
+            const reminderData = {
+                id: Date.now(),
+                title: formData.get('reminderTitle'),
+                description: formData.get('reminderDescription'),
+                date: formData.get('reminderDate'),
+                time: formData.get('reminderTime'),
+                type: formData.get('reminderType'),
+                frequency: formData.get('reminderFrequency'),
+                active: true,
+                created: new Date().toISOString()
+            };
+
+            // Save to localStorage
+            const existingReminders = JSON.parse(localStorage.getItem('reminders')) || [];
+            existingReminders.push(reminderData);
+            localStorage.setItem('reminders', JSON.stringify(existingReminders));
+            
+            // Show success message
+            successMessage.style.display = 'block';
+            
+            // Reset form
+            setReminderForm.reset();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+            
+            // Scroll to top to show success message
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Set minimum date to today
+        document.getElementById('reminderDate').min = new Date().toISOString().split('T')[0];
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-hidden');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('mobile-hidden');
+            }
+        });
+
+        // Initialize sidebar state based on screen size
+        if (window.innerWidth <= 768) {
+            sidebar.classList.add('mobile-hidden');
+        }
+
+        // Form validation
+        const inputs = document.querySelectorAll('.form-input, .form-select, .form-textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', validateInput);
+            input.addEventListener('input', clearValidation);
+        });
+
+        function validateInput(e) {
+            const input = e.target;
+            const value = input.value.trim();
+            
+            if (input.hasAttribute('required') && !value) {
+                showInputError(input, 'This field is required');
+            }
+        }
+
+        function showInputError(input, message) {
+            clearValidation({ target: input });
+            input.style.borderColor = '#ef4444';
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.style.color = '#ef4444';
+            errorDiv.style.fontSize = '0.875rem';
+            errorDiv.style.marginTop = '0.25rem';
+            errorDiv.textContent = message;
+            
+            input.parentNode.appendChild(errorDiv);
+        }
+
+        function clearValidation(e) {
+            const input = e.target;
+            input.style.borderColor = '';
+            
+            const errorMessage = input.parentNode.querySelector('.error-message');
+            if (errorMessage) {
+                errorMessage.remove();
+            }
+        }
+        // Logout functionality
+        // document.getElementById('logoutBtn').addEventListener('click', () => {
+        //     if (confirm('Are you sure you want to logout?')) {
+        //         localStorage.clear();
+        //         window.location.href = 'login3.html';
+        //     }
+        // });
+    </script>
+</body>
+</html>

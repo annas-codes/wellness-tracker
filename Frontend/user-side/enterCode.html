@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Verification Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #357a63;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .code-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(108, 154, 139, 0.38);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .code-title {
+            font-size: 46px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .code-subtitle {
+            font-size: 15px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 48px;
+            line-height: 1.2;
+            max-width: 386px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 19px;
+            font-weight: 400;
+            color: white;
+            margin-bottom: 16px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .code-inputs-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .code-input {
+            width: 50px;
+            height: 60px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid white;
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .code-input:focus {
+            border-bottom-color: #f4f0e1;
+            transform: scale(1.05);
+        }
+
+        .code-input.filled {
+            border-bottom-color: #4caf50;
+        }
+
+        .code-input.error {
+            border-bottom-color: #ff6b6b;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .resend-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .resend-text {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .resend-link {
+            color: rgba(238, 136, 221, 0.61);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            line-height: 1.2;
+            transition: color 0.3s ease;
+        }
+
+        .resend-link:hover {
+            color: rgba(238, 136, 221, 0.8);
+        }
+
+        .resend-link.disabled {
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+
+        .timer {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .verify-button {
+            width: 100%;
+            height: 80px;
+            background-color: #40866f;
+            border: 1px solid #f4f0e1;
+            border-radius: 10px;
+            color: #f4f0e1;
+            font-size: 19px;
+            font-weight: 400;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            box-shadow: 10px 10px 4px rgba(0, 0, 0, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .verify-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .verify-button:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 8px 8px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .verify-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .back-link a {
+            color: rgba(238, 136, 221, 0.61);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: rgba(238, 136, 221, 0.8);
+        }
+
+        /* Success and Error message styles */
+        .message {
+            display: none;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .success-message {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .error-message {
+            background-color: rgba(244, 67, 54, 0.9);
+            color: white;
+        }
+
+        .message.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .code-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            .code-title {
+                font-size: 36px;
+                margin-bottom: 20px;
+            }
+
+            .code-subtitle {
+                font-size: 14px;
+                margin-bottom: 36px;
+            }
+
+            .code-input {
+                width: 45px;
+                height: 55px;
+                font-size: 20px;
+            }
+
+            .code-inputs-container {
+                gap: 8px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-label {
+                font-size: 17px;
+            }
+
+            .verify-button {
+                height: 60px;
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .code-container {
+                padding: 25px 15px;
+            }
+
+            .code-title {
+                font-size: 28px;
+            }
+
+            .code-subtitle {
+                font-size: 13px;
+            }
+
+            .code-input {
+                width: 40px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .code-inputs-container {
+                gap: 6px;
+            }
+
+            .form-label {
+                font-size: 16px;
+            }
+
+            .verify-button {
+                height: 50px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .code-input {
+                width: 35px;
+                height: 45px;
+                font-size: 16px;
+            }
+
+            .code-inputs-container {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="code-container">
+        <h1 class="code-title">Enter Code</h1>
+        <p class="code-subtitle">"Enter the 6-digit verification code sent to your email address"</p>
+        
+        <form id="codeForm">
+            <div class="form-group">
+                <label class="form-label">Verification Code</label>
+                <div class="code-inputs-container">
+                    <input type="text" class="code-input" maxlength="1" data-index="0">
+                    <input type="text" class="code-input" maxlength="1" data-index="1">
+                    <input type="text" class="code-input" maxlength="1" data-index="2">
+                    <input type="text" class="code-input" maxlength="1" data-index="3">
+                    <input type="text" class="code-input" maxlength="1" data-index="4">
+                    <input type="text" class="code-input" maxlength="1" data-index="5">
+                </div>
+            </div>
+            
+            <div class="resend-section">
+                <p class="resend-text">Didn't receive the code?</p>
+                <a href="#" class="resend-link" id="resendLink">Resend Code</a>
+                <div class="timer" id="timer"></div>
+            </div>
+            
+            <button type="submit" class="verify-button" id="verifyButton">
+                <span id="buttonText">Verify Code</span>
+                <span id="spinner" class="spinner hidden"></span>
+            </button>
+            
+            <div class="back-link">
+                <a href="resetpage.html" id="backLink">Back to Reset Password</a>
+            </div>
+            
+            <div class="message success-message" id="successMessage">
+                Code verified successfully! Redirecting to create new password...
+            </div>
+            
+            <div class="message error-message" id="errorMessage">
+                Invalid verification code. Please try again.
+            </div>
+        </form>
+    </div>
+
+   <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const codeForm = document.getElementById("codeForm");
+    const codeInputs = document.querySelectorAll(".code-input");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+ 
+
+    
+const resendLink = document.getElementById('resendLink');
+const timer = document.getElementById('timer');
+let resendTimer = 0;
+let resendInterval;
+
+// Start resend timer
+function startResendTimer() {
+    resendTimer = 60; // 60 seconds
+    resendLink.classList.add('disabled');
+    
+    resendInterval = setInterval(() => {
+        resendTimer--;
+        timer.textContent = `Resend available in ${resendTimer}s`;
+        
+        if (resendTimer <= 0) {
+            clearInterval(resendInterval);
+            resendLink.classList.remove('disabled');
+            timer.textContent = '';
+        }
+    }, 1000);
+}
+
+// Handle resend link
+resendLink.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    if (this.classList.contains('disabled')) {
+        return;
+    }
+
+    const email = localStorage.getItem("resetEmail");
+    if (!email) {
+        alert("No email found. Please go back and enter your email again.");
+        return;
+    }
+
+    try {
+        // Call backend again to send new code
+        const res = await fetch("http://localhost:3000/api/auth/forgot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+            alert("New verification code sent to your email.");
+            localStorage.removeItem("resetCode"); // old code clear
+            startResendTimer();
+        } else {
+            alert(data.message || "Failed to resend code.");
+        }
+    } catch (err) {
+        console.error("Resend error:", err);
+        alert("Server error while resending code.");
+    }
+});
+
+// Initialize timer on page load
+window.addEventListener('load', () => {
+    startResendTimer();
+});
+
+// cursor move
+
+
+// Auto move cursor forward and backward
+codeInputs.forEach((input, index) => {
+  input.addEventListener("input", (e) => {
+    if (e.target.value.length === 1 && index < codeInputs.length - 1) {
+      codeInputs[index + 1].focus(); // move forward
+    }
+  });
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Backspace" && !e.target.value && index > 0) {
+      codeInputs[index - 1].focus(); // move backward
+    }
+  });
+});
+
+
+    function hideMessages() {
+        successMessage.classList.remove("show");
+        errorMessage.classList.remove("show");
+    }
+
+    function showErrorMessage(msg) {
+        hideMessages();
+        errorMessage.textContent = msg;
+        errorMessage.classList.add("show");
+    }
+
+    function showSuccessMessage(msg) {
+        hideMessages();
+        successMessage.textContent = msg;
+        successMessage.classList.add("show");
+    }
+
+    function getCode() {
+        return Array.from(codeInputs).map(input => input.value).join('');
+    }
+
+    function isValidCode(code) {
+        return code.length === 6 && /^\d+$/.test(code);
+    }
+
+    codeForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        hideMessages();
+
+        const code = getCode();
+        const email = localStorage.getItem("resetEmail");
+
+        if (!email) {
+            showErrorMessage("Session expired. Please restart the reset process.");
+            return;
+        }
+
+        if (!isValidCode(code)) {
+            showErrorMessage("Please enter a valid 6-digit code.");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://localhost:3000/api/auth/verify-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, code })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                showErrorMessage(data.message || "Invalid verification code.");
+            } else {
+                localStorage.setItem("resetCode", code);
+                showSuccessMessage("Code verified! Redirecting...");
+                setTimeout(() => {
+                    window.location.href = "setNew3.html";
+                }, 1500);
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            showErrorMessage("Server error. Please try again.");
+        }
+    });
+});
+</script>
+
+
+
+
+
+</body>
+</html>

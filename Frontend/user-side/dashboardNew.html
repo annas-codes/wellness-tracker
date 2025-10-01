@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .logout-btn {
+            margin: 1rem;
+            text-align: center;
+        }
+
+        .logout-btn .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 80%;
+        }
+
+        .logout-btn .filter-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .welcome-banner {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .welcome-text {
+            font-size: 1.5rem;
+            color: #357a63;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #357a63;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .progress-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .current-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #357a63;
+        }
+
+        .target-value {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(53, 122, 99, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #357a63, #4a9d7a);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.completed {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+        }
+
+        .quick-actions {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-actions h3 {
+            color: #357a63;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(53, 122, 99, 0.1);
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #357a63;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+
+        .action-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+        }
+
+        .recommendations {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendations h3 {
+            color: #357a63;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(53, 122, 99, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #357a63;
+        }
+
+        .recommendation-icon {
+            font-size: 1.2rem;
+            margin-right: 0.75rem;
+        }
+
+        .recommendation-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(53, 122, 99, 0.3);
+            border-top: 4px solid #357a63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .dashboard-card {
+                padding: 1.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 0.5rem;
+            }
+
+            .dashboard-card {
+                padding: 1rem;
+            }
+
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-banner {
+                padding: 1.5rem;
+            }
+        }
+
+        .hidden-bmi {
+  display: none;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboardNew.html" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart2.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="setReminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminder.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+            </ul>
+            <div class="logout-btn">
+                <button class="filter-btn" id="logoutBtn">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Dashboard</h2>
+                <div></div>
+            </div>
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Wellness Dashboard</h1>
+                <p>Your personalized health and wellness overview</p>
+            </div>
+
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-text" id="welcomeText">Welcome back, User!</div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="userAge">--</div>
+                        <div class="stat-label">Age</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userWeight">--</div>
+                        <div class="stat-label">Weight (kg)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="userHeight">--</div>
+                        <div class="stat-label">Height (cm)</div>
+                    </div>
+                    <div class="stat-item hidden-bmi">
+    <div class="stat-value" id="userBMI">--</div>
+    <div class="stat-label">BMI</div>
+</div>
+
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Water Intake Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">💧</div>
+                        <div>
+                            <div class="card-title">Water Intake</div>
+                            <div class="card-subtitle">Stay hydrated throughout the day</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="waterCurrent">0ml</span>
+                            <span class="target-value">Goal: <span id="waterTarget">2000ml</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="waterProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Food Intake Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">🍎</div>
+                        <div>
+                            <div class="card-title">Food Intake</div>
+                            <div class="card-subtitle">Track your daily calories</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="foodCurrent">0 kcal</span>
+                            <span class="target-value">Goal: <span id="foodTarget">2000 kcal</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="foodProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sleep Tracking Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div class="card-icon">😴</div>
+                        <div>
+                            <div class="card-title">Sleep Tracking</div>
+                            <div class="card-subtitle">Monitor your sleep quality</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-info">
+                            <span class="current-value" id="sleepCurrent">0h</span>
+                            <span class="target-value">Goal: <span id="sleepTarget">8h</span></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="sleepProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>🚀 Quick Actions</h3>
+                <div class="actions-grid">
+                    <a href="activity2.html" class="action-btn">
+                        <span class="action-icon">🏃</span>
+                        Track Activities
+                    </a>
+                    <a href="chart2.html" class="action-btn">
+                        <span class="action-icon">📈</span>
+                        View Charts
+                    </a>
+                    <a href="setReminder.html" class="action-btn">
+                        <span class="action-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                    <a href="editprofile.html" class="action-btn">
+                        <span class="action-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="recommendations">
+                <h3>💡 Personalized Recommendations</h3>
+                <div id="recommendationsList">
+                    <!-- Recommendations will be populated by JavaScript -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+   <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login3.html";
+    return;
+  }
+
+  const base = "http://localhost:3000";
+
+  async function api(path, opts = {}) {
+    opts.headers = Object.assign({}, opts.headers || {}, {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    });
+    const res = await fetch(base + path, opts);
+    if (res.status === 401) {
+      localStorage.removeItem("token");
+      alert("Session expired. Please login again.");
+      window.location.href = "login3.html";
+      throw new Error("Unauthorized");
+    }
+    return res;
+  }
+
+  try {
+    // PROFILE
+    const pRes = await api("/api/profile");
+    const pData = await pRes.json();
+    let userProfile = null;
+    let waterGoal = 2000, foodGoal = 2000, sleepGoal = 8;
+
+    if (pRes.ok && pData.user) {
+      const u = pData.user;
+      userProfile = u;
+
+      // UI update
+      document.getElementById("welcomeText").textContent = `Welcome back, ${u.name || "User"}!`;
+      document.getElementById("userAge").textContent = u.age ?? "--";
+      document.getElementById("userWeight").textContent = u.weight ?? "--";
+      document.getElementById("userHeight").textContent = u.height ?? "--";
+
+      // BMI
+      if (u.weight && u.height) {
+        const bmi = (u.weight / ((u.height / 100) ** 2)).toFixed(1);
+        document.getElementById("userBMI").textContent = bmi;
+      } else {
+        document.getElementById("userBMI").textContent = "--";
+      }
+
+      // --- GOAL CALCULATION (same as activities page) ---
+      if (u.weight) {
+        waterGoal = Math.round(u.weight * 35); // ml
+      }
+      if (u.weight && u.height && u.age) {
+        const bmr = 10 * u.weight + 6.25 * u.height - 5 * u.age + 5; // Mifflin-St Jeor (male, adjust if female)
+        foodGoal = Math.round(bmr);
+      }
+      if (u.age) {
+        if (u.age < 18) sleepGoal = 9;
+        else if (u.age >= 18 && u.age <= 64) sleepGoal = 8;
+        else sleepGoal = 7;
+      }
+
+      // Update UI targets
+      document.getElementById("waterTarget").textContent = `${waterGoal}ml`;
+      document.getElementById("foodTarget").textContent = `${foodGoal} kcal`;
+      document.getElementById("sleepTarget").textContent = `${sleepGoal}h`;
+    }
+
+    // TODAY TRACKING
+    const tRes = await api("/api/tracking/today");
+    if (tRes.ok) {
+      const tData = await tRes.json();
+      const t = tData.tracking || {};
+
+      const water = t.water?.amount ?? 0;
+      const food = t.food?.calories ?? 0;
+      const sleep = t.sleep?.hours ?? 0;
+
+      // Update bars
+      document.getElementById("waterCurrent").textContent = `${water}ml`;
+      document.getElementById("foodCurrent").textContent = `${food} kcal`;
+      document.getElementById("sleepCurrent").textContent = `${sleep}h`;
+
+      const waterPct = Math.min((water / waterGoal) * 100, 100);
+      const foodPct = Math.min((food / foodGoal) * 100, 100);
+      const sleepPct = Math.min((sleep / sleepGoal) * 100, 100);
+
+      document.getElementById("waterProgress").style.width = waterPct + "%";
+      document.getElementById("foodProgress").style.width = foodPct + "%";
+      document.getElementById("sleepProgress").style.width = sleepPct + "%";
+
+      // Recommendations
+      generateRecommendations(userProfile, { water, food, sleep });
+    }
+
+  } catch (err) {
+    console.error("Dashboard error:", err);
+  }
+
+  // Generate Recommendations
+  function generateRecommendations(profile, tracking) {
+    const recs = [];
+    if (!profile) return;
+
+    const bmi = profile.weight && profile.height
+      ? (profile.weight / ((profile.height / 100) ** 2)).toFixed(1)
+      : null;
+
+    if (bmi && bmi > 25) recs.push("Try reducing calorie intake and exercising regularly.");
+    if (bmi && bmi < 18.5) recs.push("Consider increasing your calorie intake for healthy weight gain.");
+    if ((tracking.water || 0) < 2000) recs.push("Increase your water intake to stay hydrated.");
+    if ((tracking.sleep || 0) < 7) recs.push("Aim for at least 7-8 hours of sleep.");
+    if ((tracking.food || 0) > 2500) recs.push("Reduce high-calorie foods and eat more vegetables.");
+
+    if (recs.length === 0) recs.push("You're on track! Keep up the great work!");
+
+    const list = document.getElementById("recommendationsList");
+    list.innerHTML = "";
+    recs.forEach(r => {
+      const div = document.createElement("div");
+      div.className = "recommendation-item";
+      div.innerHTML = `<span class="recommendation-icon">💡</span>
+                       <span class="recommendation-text">${r}</span>`;
+      list.appendChild(div);
+    });
+  }
+
+  // Logout
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    if (confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem("token");
+      window.location.href = "login3.html";
+    }
+  });
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Wellness App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #357a63;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem 0;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 1.5rem;
+            height: 60px; /* Reserve space for logo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo h2 {
+            color: #357a63;
+            font-size: 1.5rem;
+            font-weight: 700;
+            opacity: 0; /* Hidden but space reserved */
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: #555;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border-left-color: #357a63;
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .mobile-header {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #357a63;
+            cursor: pointer;
+        }
+
+        .edit-profile-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .edit-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #357a63;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(53, 122, 99, 0.3);
+        }
+
+        .edit-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .edit-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .profile-picture-edit {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+        }
+
+        .profile-img-edit {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #357a63;
+            box-shadow: 0 4px 20px rgba(53, 122, 99, 0.3);
+        }
+
+        .picture-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #357a63;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(53, 122, 99, 0.4);
+        }
+
+        .picture-upload:hover {
+            background: #2d6b56;
+            transform: scale(1.1);
+        }
+
+        .picture-upload.success {
+            background: #22c55e;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(53, 122, 99, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #357a63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(53, 122, 99, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #357a63;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(53, 122, 99, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(53, 122, 99, 0.1);
+            color: #357a63;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(53, 122, 99, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1000;
+                width: 280px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .edit-profile-card {
+                padding: 1.5rem;
+            }
+
+            .edit-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-picture-edit {
+                width: 120px;
+                height: 120px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .edit-profile-card {
+                padding: 1rem;
+                margin: 0;
+                border-radius: 12px;
+            }
+
+            .profile-picture-edit {
+                width: 100px;
+                height: 100px;
+            }
+
+            .picture-upload {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+         .logout-btn {
+            margin: 1rem;
+            text-align: center;
+        }
+
+        .logout-btn .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid rgba(53, 122, 99, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            color: #357a63;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 80%;
+        }
+
+        .logout-btn .filter-btn:hover {
+            background: #357a63;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(53, 122, 99, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>🌟 Wellness</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="dashboardNew.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="activity2.html" class="nav-link">
+                        <span class="nav-icon">🏃</span>
+                        Activities
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="chart2.html" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        Charts
+                    </a>
+                <li class="nav-item">
+                    <a href="setReminder.html" class="nav-link">
+                        <span class="nav-icon">⏰</span>
+                        Set Reminder
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reminder.html" class="nav-link">
+                        <span class="nav-icon">🔔</span>
+                        Reminders
+                    </a>
+                </li>
+                
+                
+               
+                </li>
+                <li class="nav-item">
+                    <a href="editprofile.html" class="nav-link active">
+                        <span class="nav-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                </li>
+            </ul>
+            <!-- <div class="logout-btn">
+                <button class="filter-btn" id="logoutBtn">Logout</button>
+            </div> -->
+        </nav>
+
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Back Button -->
+            <button class="back-button" onclick="history.back()" title="Go Back">
+                ←
+            </button>
+
+            <!-- Mobile Header -->
+            <div class="mobile-header">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h2>Edit Profile</h2>
+                <div></div>
+            </div>
+
+            <!-- Edit Profile Card -->
+            <div class="edit-profile-card">
+                <div class="edit-header">
+                    <h1>Edit Profile</h1>
+                    <p>Update your personal information</p>
+                </div>
+
+                <div id="successMessage" class="success-message">
+                    Profile updated successfully! 🎉
+                </div>
+
+                <form id="editProfileForm">
+                    <div class="profile-picture-edit">
+                        <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop" 
+                             alt="Profile Picture" class="profile-img-edit" id="profileImgEdit">
+                        <button type="button" class="picture-upload" id="pictureUploadBtn">📷</button>
+                        <input type="file" id="pictureInput" class="hidden-input" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="e.g., John Smith" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" id="age" name="age" class="form-input" placeholder="e.g., 25" min="1" max="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" class="form-input" placeholder="e.g., 70.5" min="1" max="500" step="0.1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height" class="form-label">Height (cm)</label>
+                        <input type="number" id="height" name="height" class="form-input" placeholder="e.g., 175" min="50" max="300" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="profile.html" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+   <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "login3.html";
+    return;
+  }
+
+  // Load profile from backend (use data.user)
+  try {
+    const res = await fetch("http://localhost:3000/api/profile", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await res.json();
+    if (res.ok && data.user) {
+      const user = data.user;
+      document.getElementById("name").value = user.name || "";
+      document.getElementById("age").value = user.age || "";
+      document.getElementById("weight").value = user.weight || "";
+      document.getElementById("height").value = user.height || "";
+    } else {
+      console.error("Profile load failed:", data);
+    }
+  } catch (err) {
+    console.error("Profile load error", err);
+  }
+
+  /// Save profile to backend
+document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const weight = parseFloat(document.getElementById("weight").value) || undefined;
+  const heightCm = parseFloat(document.getElementById("height").value) || undefined;
+
+  // ✅ Calculate BMI if both weight and height are given
+  let bmi;
+  if (weight && heightCm) {
+    const heightM = heightCm / 100;
+    bmi = (weight / (heightM * heightM)).toFixed(2); // keep 2 decimals
+  }
+
+  const profile = {
+    name: document.getElementById("name").value,
+    age: parseInt(document.getElementById("age").value) || undefined,
+    weight,
+    height: heightCm,
+    bmi   // ✅ new field
+  };
+
+  try {
+    const res = await fetch("http://localhost:3000/api/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(profile)
+    });
+    const data = await res.json();
+    if (res.ok && data.user) {
+      alert(`Profile updated successfully! `);
+      window.location.href = "dashboardNew.html";
+    } else {
+      alert(data.message || "Error updating profile");
+      console.error("Update profile response:", data);
+    }
+  } catch (err) {
+    console.error("Profile save error", err);
+    alert("Error saving profile");
+  }
+});
+
+});
+</script>
+
+</body>
+</html>
