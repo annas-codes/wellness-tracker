@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from user-side folder
-app.use(express.static(path.join(__dirname,  '..', 'user-side')));
+app.use(express.static(path.join(__dirname,  '..', 'Frontend', 'user-side')));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -29,31 +29,31 @@ app.get('/api/health', (req, res) => {
 
 // Frontend routes
 app.get('/Landing', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'landing.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend', 'user-side', 'landing.html'));
 });
 
 app.get('/Registration', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'registration2.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend',  'user-side', 'registration2.html'));
 });
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'login3.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend', 'user-side', 'login3.html'));
 });
 
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'dashboardNew.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend', 'user-side', 'dashboardNew.html'));
 });
 
 app.get('/reset', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'resetpage.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend', 'user-side', 'resetpage.html'));
 });
 
 app.get('/setnew', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'setNew3.html'));
+  res.sendFile(path.join(__dirname,  '..','Frontend', 'user-side', 'setNew3.html'));
 });
 
 app.get('/afterpass', (req, res) => {
-  res.sendFile(path.join(__dirname,  '..', 'user-side', 'afterpass.html'));
+  res.sendFile(path.join(__dirname,  '..', 'Frontend', 'user-side', 'afterpass.html'));
 });
 
 // Error handling middleware
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
 // Database connection
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/wellness-tracker');
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/wellness-tracker');
     console.log('✅ Connected to MongoDB');
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
