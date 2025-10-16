@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const Tracking = require('../models/tracking');
+const Tracking = require('../models/Tracking');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
