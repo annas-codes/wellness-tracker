@@ -286,7 +286,7 @@ document.getElementById("resetForm").addEventListener("submit", async function(e
     }
 
     try {
-        const res = await fetch("http://localhost:3000/api/auth/forgot", {
+        const res = await fetch("https://wellness-tracker-production-e276.up.railway.app/api/auth/forgot", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
